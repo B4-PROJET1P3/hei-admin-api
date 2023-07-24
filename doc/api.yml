@@ -1381,6 +1381,125 @@ paths:
           $ref: '#/components/responses/429'
         '500':
           $ref: '#/components/responses/500'
+  /students/{sId}/transcripts/{tId}/versions:
+    get:
+      tags:
+        - Teaching
+      summary: Get all versions of a transcript
+      parameters:
+        - name: sId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tId
+          in: path
+          required: true
+          schema:
+            type: string
+      operationId: getVersions
+      responses:
+        '200':
+          description: List of all versions claims of a transcript
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Version'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      tags:
+        - Teaching
+      summary: Create versions
+      parameters:
+        - name: sId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tId
+          in: path
+          required: true
+          schema:
+            type: string
+      operationId: createVersions
+      requestBody:
+        description: Versions to create
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Version'
+      responses:
+        '200':
+          description: Created versions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Version'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
+  /students/{sId}/transcripts/{tId}/versions/{vId}:
+    get:
+      tags:
+        - Teaching
+      summary: Get a specific version
+      parameters:
+        - name: sId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: tId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: vId
+          in: path
+          required: true
+          schema:
+            type: string
+      operationId: getVersion
+      responses:
+        '200':
+          description: A specific version of a transcript
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '429':
+          $ref: '#/components/responses/429'
+        '500':
+          $ref: '#/components/responses/500'
 components:
   securitySchemes:
     BearerAuth:

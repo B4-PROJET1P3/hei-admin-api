@@ -22,12 +22,21 @@ public class TranscriptController {
     private final TranscriptMapper transcriptMapper;
 
     @GetMapping("/students/{studentId}/transcripts")
-    public List<Transcript> getTranscriptByStudentId(
+    public List<Transcript> getTranscriptsByStudentId(
             @PathVariable String studentId,
             @RequestParam PageFromOne page,
             @RequestParam("page_size") BoundedPageSize pageSize){
         return transcriptService.getTranscriptsByStudentId(studentId, page, pageSize)
                 .stream().map(transcriptMapper::toRestTranscript)
                 .collect(toUnmodifiableList());
+    }
+
+    @GetMapping("/students/{studentId}/transcripts/{transcriptId}")
+    public Transcript getTranscriptByStudentIdAndTranscriptId(
+            @PathVariable String studentId,
+            @PathVariable String transcriptId){
+        return transcriptMapper
+                .toRestTranscript(transcriptService
+                        .getByStudentIdAndTranscriptId(studentId, transcriptId));
     }
 }

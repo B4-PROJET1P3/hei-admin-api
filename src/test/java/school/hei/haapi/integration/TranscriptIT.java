@@ -25,7 +25,10 @@ import static school.hei.haapi.integration.conf.TestUtils.MANAGER1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_ID;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT1_TOKEN;
 import static school.hei.haapi.integration.conf.TestUtils.STUDENT2_ID;
+import static school.hei.haapi.integration.conf.TestUtils.TRANSCRIPT1_ID;
+import static school.hei.haapi.integration.conf.TestUtils.TRANSCRIPT3_ID;
 import static school.hei.haapi.integration.conf.TestUtils.anAvailableRandomPort;
+import static school.hei.haapi.integration.conf.TestUtils.assertThrowsApiException;
 import static school.hei.haapi.integration.conf.TestUtils.setUpCognito;
 import static school.hei.haapi.integration.conf.TestUtils.transcript1;
 import static school.hei.haapi.integration.conf.TestUtils.transcript2;
@@ -55,12 +58,27 @@ class TranscriptIT {
   void student_read_ok() throws ApiException {
     ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
     TranscriptApi api = new TranscriptApi(student1Client);
-    
-    List<Transcript> actual = api.getStudentTranscripts(STUDENT1_ID, 1, 5);
 
-    assertEquals(2, actual.size());
-    assertTrue(actual.contains(transcript1()));
-    assertTrue(actual.contains(transcript2()));
+    Transcript actual = api.getStudentTranscriptById(STUDENT1_ID, TRANSCRIPT1_ID);
+    List<Transcript> actualTranscripts = api.getStudentTranscripts(STUDENT1_ID, 1, 5);
+
+    assertEquals(transcript1(), actual);
+    assertEquals(2, actualTranscripts.size());
+    assertTrue(actualTranscripts.contains(transcript1()));
+    assertTrue(actualTranscripts.contains(transcript2()));
+  }
+
+  @Test
+  void student_read_ko() {
+    ApiClient student1Client = anApiClient(STUDENT1_TOKEN);
+    TranscriptApi api = new TranscriptApi(student1Client);
+
+    assertThrowsApiException(
+            "{\"type\":\"403 FORBIDDEN\",\"message\":\"Access is denied\"}",
+            () -> api.getStudentTranscriptById(STUDENT2_ID, TRANSCRIPT3_ID));
+    assertThrowsApiException(
+            "{\"type\":\"403 FORBIDDEN\",\"message\":\"Access is denied\"}",
+            () -> api.getStudentTranscripts(STUDENT2_ID, null, null));
   }
 
   @Test
@@ -68,11 +86,13 @@ class TranscriptIT {
     ApiClient manager1Client = anApiClient(MANAGER1_TOKEN);
     TranscriptApi api = new TranscriptApi(manager1Client);
 
-    List<Transcript> actual = api.getStudentTranscripts(STUDENT2_ID, 1, 5);
+    Transcript actual = api.getStudentTranscriptById(STUDENT2_ID, TRANSCRIPT3_ID);
+    List<Transcript> actualTranscripts = api.getStudentTranscripts(STUDENT2_ID, 1, 5);
 
-    assertEquals(2, actual.size());
-    assertTrue(actual.contains(transcript3()));
-    assertTrue(actual.contains(transcript4()));
+    assertEquals(transcript3(), actual);
+    assertEquals(2, actualTranscripts.size());
+    assertTrue(actualTranscripts.contains(transcript3()));
+    assertTrue(actualTranscripts.contains(transcript4()));
   }
 
   static class ContextInitializer extends AbstractContextInitializer {

@@ -29,4 +29,10 @@ public class TranscriptService {
                 Sort.by(DESC, "academicYear"));
         return transcriptRepository.getByStudentId(studentId, pageable);
     }
+
+    public Transcript getByStudentIdAndTranscriptId(
+            String studentId,
+            String transcriptId){
+        return transcriptRepository.getByStudentIdAndId(studentId, transcriptId);
+    }
 }

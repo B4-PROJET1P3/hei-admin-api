@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface TranscriptRepository extends JpaRepository<Transcript, String> {
     List<Transcript> getByStudentId(String studentId, Pageable pageable);
+
+    Transcript getByStudentIdAndId(String studentId, String transcriptId);
 }

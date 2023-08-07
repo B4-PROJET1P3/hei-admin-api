@@ -38,5 +38,5 @@ public class Transcript implements Serializable {
 
   private Instant creationDatetime;
 
-  public static final String CREATION_DATETIME = "creationDatetime";
+  public static final String CREATION_DATETIME_ATTRIBUTE = "creationDatetime";
 }

@@ -1,14 +1,18 @@
 package school.hei.haapi.endpoint.rest.controller;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import school.hei.haapi.endpoint.rest.mapper.TranscriptMapper;
 import school.hei.haapi.endpoint.rest.model.Transcript;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.service.TranscriptService;
-
-import java.util.List;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 
@@ -16,32 +20,31 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 @AllArgsConstructor
 public class TranscriptController {
 
-  private final TranscriptService transcriptService;
-  private final TranscriptMapper transcriptMapper;
+  private final TranscriptService service;
+  private final TranscriptMapper mapper;
 
   @GetMapping(value = "/students/{studentId}/transcripts/{transcriptId}")
   public Transcript getStudentTranscriptById(@PathVariable String studentId,
                                              @PathVariable String transcriptId) {
-    return transcriptMapper.toRest(transcriptService.getByIdAndStudentId(transcriptId, studentId));
+    return mapper.toRest(service.getByIdAndStudentId(transcriptId, studentId));
   }
 
   @GetMapping(value = "/students/{studentId}/transcripts")
   public List<Transcript> getStudentTranscripts(@PathVariable String studentId,
-                                         @RequestParam PageFromOne page,
-                                         @RequestParam("page_size") BoundedPageSize pageSize) {
-    return transcriptService.getAllTranscriptsByStudentId(studentId, page, pageSize).stream()
-        .map(transcriptMapper::toRest)
+                                                @RequestParam PageFromOne page,
+                                                @RequestParam("page_size")
+                                                BoundedPageSize pageSize) {
+    return service.getAllTranscriptsByStudentId(studentId, page, pageSize).stream()
+        .map(mapper::toRest)
         .collect(toUnmodifiableList());
   }
 
   @PutMapping(value = "/students/{studentId}/transcripts")
   public List<Transcript> crudStudentTranscripts(@PathVariable String studentId,
                                                  @RequestBody List<Transcript> transcripts) {
-    var saved = transcriptService.saveAll(transcripts.stream()
-        .map(transcript -> transcriptMapper.toDomain(transcript, studentId))
-        .collect(toUnmodifiableList()));
+    var saved = service.saveAll(mapper.toDomain(transcripts, studentId));
     return saved.stream()
-        .map(transcriptMapper::toRest)
+        .map(mapper::toRest)
         .collect(toUnmodifiableList());
   }
 }

@@ -1,5 +1,6 @@
 package school.hei.haapi.service;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -10,8 +11,6 @@ import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.Transcript;
 import school.hei.haapi.repository.TranscriptRepository;
-
-import java.util.List;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
@@ -25,16 +24,13 @@ public class TranscriptService {
     return transcriptRepository.getTranscriptByIdAndStudentId(transcriptId, studentId);
   }
 
-  public List<Transcript> getAllTranscriptsByStudentId(String studentId, PageFromOne page, BoundedPageSize pageSize) {
+  public List<Transcript> getAllTranscriptsByStudentId(String studentId, PageFromOne page,
+                                                       BoundedPageSize pageSize) {
     Pageable pageable = PageRequest.of(
-            page.getValue() - 1,
-            pageSize.getValue(),
-            Sort.by(DESC, Transcript.CREATION_DATETIME));
+        page.getValue() - 1,
+        pageSize.getValue(),
+        Sort.by(DESC, Transcript.CREATION_DATETIME_ATTRIBUTE));
     return transcriptRepository.getAllTranscriptsByStudentId(studentId, pageable);
-  }
-
-  public List<Transcript> getAllByStudentIdWithoutPagination(String studentId) {
-    return transcriptRepository.getAllByStudentId(studentId);
   }
 
   @Transactional

@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.Transcript;
+import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.repository.TranscriptRepository;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -21,7 +22,9 @@ public class TranscriptService {
   private final TranscriptRepository transcriptRepository;
 
   public Transcript getByIdAndStudentId(String transcriptId, String studentId) {
-    return transcriptRepository.getTranscriptByIdAndStudentId(transcriptId, studentId);
+    return transcriptRepository.getTranscriptByIdAndStudentId(transcriptId, studentId)
+        .orElseThrow(() -> new NotFoundException(
+            "Transcript.Id = " + transcriptId + "for Student.Id=" + studentId + " not found"));
   }
 
   public List<Transcript> getAllTranscriptsByStudentId(String studentId, PageFromOne page,

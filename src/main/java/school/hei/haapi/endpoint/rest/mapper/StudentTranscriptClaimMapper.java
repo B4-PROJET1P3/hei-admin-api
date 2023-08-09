@@ -3,15 +3,11 @@ package school.hei.haapi.endpoint.rest.mapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import school.hei.haapi.model.StudentTranscriptClaim;
+import school.hei.haapi.endpoint.rest.model.StudentTranscriptClaim;
 import school.hei.haapi.model.StudentTranscriptVersion;
 import school.hei.haapi.model.Transcript;
-import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.service.StudentTranscriptVersionService;
 import school.hei.haapi.service.TranscriptService;
-import school.hei.haapi.service.UserService;
-
-import java.util.Objects;
 
 @Component
 @AllArgsConstructor
@@ -20,48 +16,39 @@ public class StudentTranscriptClaimMapper {
 
   private final TranscriptService transcriptService;
   private final StudentTranscriptVersionService studentTranscriptVersionService;
-  public school.hei.haapi.endpoint.rest.model.StudentTranscriptClaim toRest(StudentTranscriptClaim studentTranscriptClaim) {
-    final Transcript transcript = studentTranscriptClaim.getTranscript();
-    final StudentTranscriptVersion version = studentTranscriptClaim.getTranscriptVersion();
 
-    if (Objects.isNull(transcript)) {
-      throw new NotFoundException("Transcript not found");
-    } else if (Objects.isNull(version)) {
-      throw new NotFoundException("Version not found");
-    } else {
-      var restStudentTranscriptClaim = new school.hei.haapi.endpoint.rest.model.StudentTranscriptClaim();
-      restStudentTranscriptClaim.setId(studentTranscriptClaim.getId());
-      restStudentTranscriptClaim.setTranscriptId(transcript.getId());
-      restStudentTranscriptClaim.setTranscriptVersionId(version.getId());
-      restStudentTranscriptClaim.setStatus(studentTranscriptClaim.getStatus());
-      restStudentTranscriptClaim.setCreationDatetime(studentTranscriptClaim.getCreationDatetime());
-      restStudentTranscriptClaim.setClosedDatetime(studentTranscriptClaim.getClosedDatetime());
-      restStudentTranscriptClaim.setReason(studentTranscriptClaim.getReason());
-      return restStudentTranscriptClaim;
-    }
+  public StudentTranscriptClaim toRest(
+      StudentTranscriptClaim studentTranscriptClaim) {
+    return new StudentTranscriptClaim()
+        .id(studentTranscriptClaim.getId())
+        .transcriptId(studentTranscriptClaim.getTranscriptId())
+        .transcriptVersionId(studentTranscriptClaim.getTranscriptVersionId())
+        .status(studentTranscriptClaim.getStatus())
+        .creationDatetime(studentTranscriptClaim.getCreationDatetime())
+        .closedDatetime(studentTranscriptClaim.getClosedDatetime())
+        .reason(studentTranscriptClaim.getReason());
   }
 
-  public StudentTranscriptClaim toDomain(school.hei.haapi.endpoint.rest.model.StudentTranscriptClaim restStudentTranscriptClaim, String studentId) {
-    final Transcript transcript = transcriptService.getByIdAndStudentId(restStudentTranscriptClaim.getTranscriptId(), studentId);
-    final StudentTranscriptVersion version = studentTranscriptVersionService.getByIdAndStudentIdAndTranscriptId(
+  public school.hei.haapi.model.StudentTranscriptClaim toDomain(
+      StudentTranscriptClaim restStudentTranscriptClaim,
+      String transcriptVersionStudentId) {
+    final Transcript transcript =
+        transcriptService.getByIdAndStudentId(restStudentTranscriptClaim.getTranscriptId(),
+            transcriptVersionStudentId);
+    final StudentTranscriptVersion version =
+        studentTranscriptVersionService.getByIdAndStudentIdAndTranscriptId(
             restStudentTranscriptClaim.getTranscriptVersionId(),
-            restStudentTranscriptClaim.getTranscriptId(),
-            studentId
-    );
-    if (Objects.isNull(transcript)) {
-      throw new NotFoundException("Transcript not found");
-    } else if (Objects.isNull(version)) {
-      throw new NotFoundException("Version not found");
-    } else {
-      return StudentTranscriptClaim.builder()
-              .id(restStudentTranscriptClaim.getId())
-              .transcript(transcript)
-              .transcriptVersion(version)
-              .status(restStudentTranscriptClaim.getStatus())
-              .creationDatetime(restStudentTranscriptClaim.getCreationDatetime())
-              .closedDatetime(restStudentTranscriptClaim.getClosedDatetime())
-              .reason(restStudentTranscriptClaim.getReason())
-              .build();
-    }
+            transcript.getId(),
+            transcriptVersionStudentId
+        );
+    return school.hei.haapi.model.StudentTranscriptClaim.builder()
+        .id(restStudentTranscriptClaim.getId())
+        .transcript(transcript)
+        .transcriptVersion(version)
+        .status(restStudentTranscriptClaim.getStatus())
+        .creationDatetime(restStudentTranscriptClaim.getCreationDatetime())
+        .closedDatetime(restStudentTranscriptClaim.getClosedDatetime())
+        .reason(restStudentTranscriptClaim.getReason())
+        .build();
   }
 }

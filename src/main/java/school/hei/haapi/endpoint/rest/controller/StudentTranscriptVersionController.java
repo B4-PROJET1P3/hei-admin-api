@@ -23,6 +23,7 @@ import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 @AllArgsConstructor
 public class StudentTranscriptVersionController {
 
+    public static final String LATEST = "latest";
     private final StudentTranscriptVersionService service;
     private final StudentTranscriptVersionMapper mapper;
 
@@ -55,7 +56,7 @@ public class StudentTranscriptVersionController {
             @PathVariable String studentId,
             @PathVariable String transcriptId,
             @PathVariable String versionId) {
-        if (Objects.equals(versionId, "latest")){
+        if (Objects.equals(versionId, LATEST)){
             return service.getStudentTranscriptVersionPdf(studentId, transcriptId);
         }
         return service.getStudentTranscriptVersionPdf(studentId, transcriptId, versionId);

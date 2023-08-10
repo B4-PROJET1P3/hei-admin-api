@@ -14,8 +14,10 @@ import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.service.StudentTranscriptVersionService;
 
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @RestController
 @AllArgsConstructor
@@ -47,15 +49,20 @@ public class StudentTranscriptVersionController {
                 .collect(toUnmodifiableList());
     }
 
-    @GetMapping(value = "/students/{studentId}/transcripts/{transcriptId}/versions/{versionId}/raw")
+    @GetMapping(value = "/students/{studentId}/transcripts/{transcriptId}/versions/{versionId}/raw",
+            produces = {APPLICATION_PDF_VALUE})
     public byte[] getStudentTranscriptVersionPdf(
             @PathVariable String studentId,
             @PathVariable String transcriptId,
             @PathVariable String versionId) {
+        if (Objects.equals(versionId, "latest")){
+            return service.getStudentTranscriptVersionPdf(studentId, transcriptId);
+        }
         return service.getStudentTranscriptVersionPdf(studentId, transcriptId, versionId);
     }
 
-    @PostMapping("/students/{studentId}/transcripts/{transcriptId}/versions/latest/raw")
+    @PostMapping(value = "/students/{studentId}/transcripts/{transcriptId}/versions/latest/raw",
+            consumes = {APPLICATION_PDF_VALUE})
     public StudentTranscriptVersion putStudentTranscriptVersionPdf(
             @PathVariable String studentId,
             @PathVariable String transcriptId,

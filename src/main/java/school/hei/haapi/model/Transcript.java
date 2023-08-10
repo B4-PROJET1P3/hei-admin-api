@@ -1,6 +1,7 @@
 package school.hei.haapi.model;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import school.hei.haapi.repository.types.PostgresEnumType;
@@ -21,22 +22,23 @@ import static javax.persistence.FetchType.LAZY;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Transcript implements Serializable {
-  @Id
-  private String id;
+    @Id
+    private String id;
 
-  @ManyToOne(fetch = LAZY)
-  @JoinColumn(name = "student_id")
-  private User student;
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "student_id")
+    private User student;
 
-  @Type(type = "pgsql_enum")
-  @Enumerated(EnumType.STRING)
-  private school.hei.haapi.endpoint.rest.model.Transcript.SemesterEnum semester;
+    @Type(type = "pgsql_enum")
+    @Enumerated(EnumType.STRING)
+    private school.hei.haapi.endpoint.rest.model.Transcript.SemesterEnum semester;
 
-  private Integer academicYear;
+    private Integer academicYear;
 
-  private Boolean isDefinitive;
+    private Boolean isDefinitive;
 
-  private Instant creationDatetime;
+    @CreationTimestamp
+    private Instant creationDatetime;
 
-  public static final String CREATION_DATETIME_ATTRIBUTE = "creationDatetime";
+    public static final String CREATION_DATETIME_ATTRIBUTE = "creationDatetime";
 }

@@ -6,8 +6,13 @@ import org.springframework.stereotype.Component;
 import school.hei.haapi.endpoint.rest.model.StudentTranscriptClaim;
 import school.hei.haapi.model.StudentTranscriptVersion;
 import school.hei.haapi.model.Transcript;
+import school.hei.haapi.model.exception.BadRequestException;
 import school.hei.haapi.service.StudentTranscriptVersionService;
 import school.hei.haapi.service.TranscriptService;
+
+import java.time.Instant;
+
+import static school.hei.haapi.endpoint.rest.model.StudentTranscriptClaim.StatusEnum.OPEN;
 
 @Component
 @AllArgsConstructor
@@ -35,12 +40,22 @@ public class StudentTranscriptClaimMapper {
     final Transcript transcript =
         transcriptService.getByIdAndStudentId(restStudentTranscriptClaim.getTranscriptId(),
             transcriptVersionStudentId);
+    if (transcript.getIsDefinitive() && restStudentTranscriptClaim.getClosedDatetime() == null && restStudentTranscriptClaim.getStatus() == OPEN){
+      throw new BadRequestException("Transcript.Id = "+ transcript.getId()+" is already definitive");
+    }
     final StudentTranscriptVersion version =
         studentTranscriptVersionService.getByIdAndStudentIdAndTranscriptId(
             restStudentTranscriptClaim.getTranscriptVersionId(),
             transcript.getId(),
             transcriptVersionStudentId
         );
+
+    if (restStudentTranscriptClaim.getClosedDatetime() != null) {
+      Instant now = Instant.now();
+      if (now.isAfter(restStudentTranscriptClaim.getClosedDatetime())) {
+        throw new BadRequestException("Closed datetime must be null or less than current time "+now);
+      }
+    }
     return school.hei.haapi.model.StudentTranscriptClaim.builder()
         .id(restStudentTranscriptClaim.getId())
         .transcript(transcript)

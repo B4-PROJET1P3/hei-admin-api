@@ -1,6 +1,7 @@
 package school.hei.haapi.model;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import school.hei.haapi.repository.types.PostgresEnumType;
@@ -36,6 +37,7 @@ public class StudentTranscriptClaim implements Serializable {
   @Enumerated(EnumType.STRING)
   private school.hei.haapi.endpoint.rest.model.StudentTranscriptClaim.StatusEnum status;
 
+  @CreationTimestamp
   private Instant creationDatetime;
 
   private Instant closedDatetime;

@@ -1,6 +1,7 @@
 package school.hei.haapi.model;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import school.hei.haapi.repository.types.PostgresEnumType;
@@ -36,6 +37,7 @@ public class Transcript implements Serializable {
 
   private Boolean isDefinitive;
 
+  @CreationTimestamp
   private Instant creationDatetime;
 
   public static final String CREATION_DATETIME_ATTRIBUTE = "creationDatetime";

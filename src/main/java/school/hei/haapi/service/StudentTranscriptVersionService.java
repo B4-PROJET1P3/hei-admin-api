@@ -17,6 +17,7 @@ import school.hei.haapi.service.aws.S3Service;
 
 import java.util.List;
 
+import static java.util.UUID.randomUUID;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
@@ -52,7 +53,13 @@ public class StudentTranscriptVersionService {
         return repository.getAllByStudentIdAndTranscriptId(studentId,
                 transcriptId, pageable);
     }
-
+    public byte[] getStudentTranscriptVersionPdf(
+            String studentId,
+            String transcriptId) {
+        var latest = getLatestByStudentIdAndTranscriptId(studentId, transcriptId);
+        String key = fileService.getKey(studentId, transcriptId, latest.getId());
+        return s3Service.downloadPdf(key);
+    }
     public byte[] getStudentTranscriptVersionPdf(
             String studentId,
             String transcriptId,
@@ -74,6 +81,7 @@ public class StudentTranscriptVersionService {
         int ref = versions.isEmpty() ? 1 : versions.get(0).getRef() + 1;
 
         StudentTranscriptVersion toCreate = StudentTranscriptVersion.builder()
+                .id(randomUUID().toString())
                 .transcript(transcript)
                 .responsible(responsible)
                 .ref(ref)

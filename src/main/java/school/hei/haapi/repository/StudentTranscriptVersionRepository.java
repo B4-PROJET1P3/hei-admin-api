@@ -27,4 +27,16 @@ public interface StudentTranscriptVersionRepository
       @Param("transcript_id") String transcriptId,
       Pageable pageable);
 
+  @Query(value = "SELECT v FROM StudentTranscriptVersion v WHERE v.transcript.student.id = :student_id" +
+          " AND v.transcript.id = :transcript_id ORDER BY v.creationDatetime DESC")
+  List<StudentTranscriptVersion> getAllByCreationDatetimeDesc(
+          @Param("student_id") String studentId,
+          @Param("transcript_id") String transcriptId);
+
+  @Query(value = "SELECT v FROM StudentTranscriptVersion v WHERE v.transcript.student.id = :student_id"
+          + " AND v.transcript.id = :transcript_id ORDER BY v.creationDatetime DESC")
+  List<StudentTranscriptVersion> getLatestByStudentIdAndTranscriptId(
+          @Param("student_id") String studentId,
+          @Param("transcript_id") String transcriptId,
+          Pageable pageable);
 }

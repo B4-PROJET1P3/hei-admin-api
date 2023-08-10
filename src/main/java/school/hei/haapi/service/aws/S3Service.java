@@ -18,7 +18,7 @@ public class S3Service {
     private final S3Conf conf;
     private final S3Client client;
 
-    private String uploadPdf(String key, byte[] data) {
+    public String uploadPdf(String key, byte[] data) {
         var response = client.putObject(request ->
                         request
                                 .bucket(conf.getBucketName())
@@ -30,7 +30,7 @@ public class S3Service {
         return response.checksumSHA256();
     }
 
-    private byte[] downloadPdf(String key) {
+    public byte[] downloadPdf(String key) {
         var response = client.getObject(request ->
                 request
                         .bucket(conf.getBucketName())

@@ -118,6 +118,7 @@ public class SecurityConf extends WebSecurityConfigurerAdapter {
         .requestMatchers(new SelfMatcher(GET, "/students/*/transcripts/*/versions/*")).hasAnyRole(STUDENT.getRole())
         .antMatchers(GET, "/students/*/transcripts/*/versions").hasAnyRole(MANAGER.getRole(), TEACHER.getRole())
         .antMatchers(GET, "/students/*/transcripts/*/versions/*").hasAnyRole(MANAGER.getRole(), TEACHER.getRole())
+        .antMatchers(POST, "/students/*/transcripts/*/versions/latest/raw").hasAnyRole(MANAGER.getRole())
         // student can read and write himself, teach and manager can read and write
         .requestMatchers(new SelfMatcher(GET, "/students/*/transcripts/*/versions/*/**")).hasAnyRole(STUDENT.getRole())
         .antMatchers(GET, "/students/*/transcripts/*/versions/*/**").hasAnyRole(MANAGER.getRole(), TEACHER.getRole())

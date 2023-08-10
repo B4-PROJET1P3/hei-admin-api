@@ -49,9 +49,11 @@ public class StudentTranscriptClaimMapper {
             transcript.getId(),
             transcriptVersionStudentId
         );
-
+    Instant now = Instant.now();
+    if (restStudentTranscriptClaim.getCreationDatetime() != null && now.isAfter(restStudentTranscriptClaim.getCreationDatetime())){
+      throw new BadRequestException("Creation datetime must be null or before current time "+now);
+    }
     if (restStudentTranscriptClaim.getClosedDatetime() != null) {
-      Instant now = Instant.now();
       if (now.isAfter(restStudentTranscriptClaim.getClosedDatetime())) {
         throw new BadRequestException("Closed datetime must be null or less than current time "+now);
       }

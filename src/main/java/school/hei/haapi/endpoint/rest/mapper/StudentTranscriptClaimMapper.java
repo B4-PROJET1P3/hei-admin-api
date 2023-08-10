@@ -54,8 +54,8 @@ public class StudentTranscriptClaimMapper {
       throw new BadRequestException("Creation datetime must be null or before current time "+now);
     }
     if (restStudentTranscriptClaim.getClosedDatetime() != null) {
-      if (now.isAfter(restStudentTranscriptClaim.getClosedDatetime())) {
-        throw new BadRequestException("Closed datetime must be null or less than current time "+now);
+      if (restStudentTranscriptClaim.getCreationDatetime().isAfter(restStudentTranscriptClaim.getClosedDatetime())) {
+        throw new BadRequestException("Closed datetime must be null or less than creation datetime "+ restStudentTranscriptClaim.getCreationDatetime());
       }
     }
     return school.hei.haapi.model.StudentTranscriptClaim.builder()

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import school.hei.haapi.model.BoundedPageSize;
 import school.hei.haapi.model.PageFromOne;
 import school.hei.haapi.model.StudentTranscriptClaim;
+import school.hei.haapi.model.exception.BadRequestException;
 import school.hei.haapi.repository.StudentTranscriptClaimRepository;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -40,6 +41,22 @@ public class StudentTranscriptClaimService {
                                      String versionId,
                                      String transcriptId,
                                      String studentId) {
+    if (!toSave.getTranscript().getId().equals(transcriptId) ){
+      throw new BadRequestException("Transcript id don't match");
+    }
+
+    if (!toSave.getTranscript().getStudent().getId().equals(studentId) ){
+      throw new BadRequestException("Student id don't match");
+    }
+
+    if (!toSave.getId().equals(claimId)){
+      throw new BadRequestException("Claims id don't match");
+    }
+
+    if (!toSave.getTranscriptVersion().getId().equals(versionId)){
+      throw new BadRequestException("Version id don't match");
+    }
+
     return repository.save(toSave);
   }
 }

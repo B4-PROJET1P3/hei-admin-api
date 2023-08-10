@@ -13,7 +13,6 @@ import school.hei.haapi.model.Transcript;
 import school.hei.haapi.model.User;
 import school.hei.haapi.model.exception.NotFoundException;
 import school.hei.haapi.repository.StudentTranscriptVersionRepository;
-import school.hei.haapi.service.aws.S3Service;
 
 import java.util.List;
 
@@ -26,7 +25,6 @@ public class StudentTranscriptVersionService {
 
     private final StudentTranscriptVersionRepository repository;
     private final FileService fileService;
-    private final S3Service s3Service;
     private final TranscriptService transcriptService;
     private final UserService userService;
 
@@ -53,19 +51,19 @@ public class StudentTranscriptVersionService {
         return repository.getAllByStudentIdAndTranscriptId(studentId,
                 transcriptId, pageable);
     }
+
     public byte[] getStudentTranscriptVersionPdf(
             String studentId,
             String transcriptId) {
         var latest = getLatestByStudentIdAndTranscriptId(studentId, transcriptId);
-        String key = fileService.getKey(studentId, transcriptId, latest.getId());
-        return s3Service.downloadPdf(key);
+        return fileService.downloadPdf(studentId, transcriptId, latest.getId());
     }
+
     public byte[] getStudentTranscriptVersionPdf(
             String studentId,
             String transcriptId,
             String versionId) {
-        String key = fileService.getKey(studentId, transcriptId, versionId);
-        return s3Service.downloadPdf(key);
+        return fileService.downloadPdf(studentId, transcriptId, versionId);
     }
 
     public StudentTranscriptVersion createLatestVersion(
@@ -89,8 +87,8 @@ public class StudentTranscriptVersionService {
 
         StudentTranscriptVersion saved = repository.save(toCreate);
 
-        s3Service.uploadPdf(
-                fileService.getKey(studentId, transcriptId, saved.getId()), file);
+        fileService.uploadPdf(
+                studentId, transcriptId, saved.getId(), file);
 
         return saved;
     }
